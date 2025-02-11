@@ -1,12 +1,15 @@
 // MDXRenderer.jsx
 import React, { useEffect, useState, Suspense } from "react";
-import { MDXProvider } from "@mdx-js/react";
 import * as runtime from "react/jsx-runtime";
 import { evaluate } from "@mdx-js/mdx";
+
 import type { UseMdxComponents } from "@mdx-js/mdx";
 import remarkCommentTooltip from "heliannuuthus-remark-comment-tooltip";
 import remarkDirective from "remark-directive";
 import remarkExternalLink from "heliannuuthus-remark-external-link";
+import MDXComponents from "@theme/MDXComponents";
+import { MDXProvider } from "@mdx-js/react";
+
 const MDXRender = ({
   content,
   components,
@@ -15,7 +18,6 @@ const MDXRender = ({
   components?: UseMdxComponents | null;
 }) => {
   const [Component, setComponent] = useState(() => () => null);
-
   const evaluateContent = async () => {
     await evaluate(content, {
       ...runtime,
@@ -44,7 +46,14 @@ const MDXRender = ({
 
   if (!Component) {
     return (
-      <MDXProvider components={components()}>
+      <MDXProvider
+        components={() => {
+          return {
+            ...components(),
+            ...MDXComponents,
+          };
+        }}
+      >
         <div>unknown component</div>
       </MDXProvider>
     );
@@ -52,7 +61,14 @@ const MDXRender = ({
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <MDXProvider components={components()}>
+      <MDXProvider
+        components={() => {
+          return {
+            ...components(),
+            ...MDXComponents,
+          };
+        }}
+      >
         <Component />
       </MDXProvider>
     </Suspense>

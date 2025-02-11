@@ -27,9 +27,9 @@ description: 由 [RFC 7519](https://www.rfc-editor.org/rfc/rfc7519) 定义的一
 > JOSE Header 的序列化有两种，分别是 JWS Compact Serialization 和 JWE JSON Serialization
 
 - JWS Compact Serialization：
+
   - 该种序列方式会舍弃掉 JWS Unprotected Header，此时的 JWS Protected Header 和 JOSE Header 相同。
   - 格式为 Base64Url(JOSE Header) || '.' || Base64Url(Payload) || '.' || Base64Url(Signature)
-
 
 - JWE JSON Serialization：
   - 该种序列方式将 JWS Protected Header 和 JWS Unprotected Header 取并集，作为 JOSE Header
@@ -84,18 +84,25 @@ description: 在[RFC 7518](https://www.rfc-editor.org/rfc/rfc7518)中定义用�
 
 > jwe 中 alg 字段通常用于指定是否包装 :ctip[`cek`]{title="Content Encryption Key"}，如果是 `dir` 则直接使用 `cek` 和 `enc` 字段指定的算法进行加密
 
-- [RSAES-PKCS1-v1_5](https://www.rfc-editor.org/rfc/rfc8017)：RSA 基于 PKCS#1 padding 的加密算法加密 `cek`，e.g. `RSA1_5`
-- [RSAES-OAEP](https://www.rfc-editor.org/rfc/rfc8017)：RSA 基于 OAEP padding 的加密算法加密 `cek`，e.g. `RSA-OAEP`, `RSA-OAEP-256`
-- [AesKeyWrap](https://www.rfc-editor.org/rfc/rfc8017)：一种使用 Aes 密钥包装 `cek` 的算法，再用 `cek` 加密明文数据，e.g. `A128KW`, `A192KW`, `A256KW`
-- [AesGCMKeyWrap](https://www.rfc-editor.org/rfc/rfc8017)：区别于 AesKeyWrap，使用 GCM 模式进行加密，通常 Header 中伴随 `iv` 和 `tag` 使用，e.g. `A128GCMKW`, `A192GCMKW`, `A256GCMKW`
+- [RSAES-PKCS1-v1_5](https://www.rfc-editor.org/rfc/rfc8017)：RSA 基于 PKCS#1 padding 的加密算法加密 `cek`。
+  e.g. `RSA1_5`
+- [RSAES-OAEP](https://www.rfc-editor.org/rfc/rfc8017)：RSA 基于 OAEP padding 的加密算法加密 `cek`。
+  e.g. `RSA-OAEP`, `RSA-OAEP-256`
+- [AesKeyWrap](https://www.rfc-editor.org/rfc/rfc8017)：一种使用 Aes 密钥包装 `cek` 的算法，再用 `cek` 加密明文数据。
+  e.g. `A128KW`, `A192KW`, `A256KW`
+- [AesGCMKeyWrap](https://www.rfc-editor.org/rfc/rfc8017)：区别于 AesKeyWrap，使用 GCM 模式进行加密，通常 Header 中伴随 `iv` 和 `tag` 使用。
+  e.g. `A128GCMKW`, `A192GCMKW`, `A256GCMKW`
   - :ctip[**iv**]{title="Initialization Vector"}:ctip[(required)]{title="使用该算法，该字段必须存在于 Header 中"}：初始化向量，通常为 96 位，使用 Base64Url 编码
   - :ctip[**tag**]{title="Authentication Tag"}:ctip[(required)]{title="使用该算法，该字段必须存在于 Header 中"}：认证标签，通常为 128 位，使用 Base64Url 编码
 - [ECDH-ES](https://www.rfc-editor.org/rfc/rfc4753)：椭圆曲线 Diffie-Hellman 算法协商出来的密钥，使用 ConcateKDF+SHA-256 生成指定长度的密钥，直接用于加密正文数据，e.g. `ECDH-ES`
-- [ECDH-ESWithAesKeyWrap](https://www.rfc-editor.org/rfc/rfc8017)：区别于 ECDH-ES，使用 Diffie-Hellman 算法交换出来的密钥，使用 ConcateKDF+SHA-256 生成指定长度的密钥，该密钥**仅对生成的 cek 进行包装**，e.g. `ECDH-ES+A128KW`, `ECDH-ES+A192KW`, `ECDH-ES+A256KW`
-  - :ctip[**epk**]{title="Ephemeral Public Key"}:ctip[(required)]{title="使用该算法，该字段必须存在于 Header 中"}：用于 Diffie-Hellman 算法交换的临时公钥，[[jwk]](/blog/terms/jwt#jwk) 格式
+- [ECDH-ESWithAesKeyWrap](https://www.rfc-editor.org/rfc/rfc8017)：区别于 ECDH-ES，使用 Diffie-Hellman 算法交换出来的密钥，
+  使用 ConcateKDF+SHA-256 生成指定长度的密钥，该密钥**仅对生成的 cek 进行包装**。
+  e.g. `ECDH-ES+A128KW`, `ECDH-ES+A192KW`, `ECDH-ES+A256KW`
+  - :ctip[**epk**]{title="Ephemeral Public Key"}:ctip[(required)]{title="使用该算法，该字段必须存在于 Header 中"}：用于 Diffie-Hellman 算法交换[[jwk]](/blog/terms/jwt#jwk) 格式的临时公钥
   - :ctip[**apu**]{title="Agreement Party UInfo"}:ctip[(required)]{title="使用该算法，该字段必须存在于 Header 中"}：发送方的附加信息，会在 ConcateKDF 中使用
   - :ctip[**apv**]{title="Agreement Party VInfo"}:ctip[(required)]{title="使用该算法，该字段必须存在于 Header 中"}：接收方的附加信息，会在 ConcateKDF 中使用
-- [PBES2](https://www.rfc-editor.org/rfc/rfc8018)：使用 PBKDF2 密码生成算法加上散列函数输出指定长度的密钥，对 cek 进行包装，e.g. `PBES2-HS256+A128KW`，`PBES2-HS384+A192KW`，`PBES2-HS512+A256KW`
+- [PBES2](https://www.rfc-editor.org/rfc/rfc8018)：使用 PBKDF2 密码生成算法加上散列函数输出指定长度的密钥，对 cek 进行包装。
+  e.g. `PBES2-HS256+A128KW`，`PBES2-HS384+A192KW`，`PBES2-HS512+A256KW`
   - :ctip[**p2c**]{title="PBES2 Count"}：PBKDF2 的迭代次数，目前推荐次数为 60,000 次，最小次数为 1,000 次
   - :ctip[**p2s**]{title="PBES2 Salt"}：PBKDF2 的盐值，最小长度为 8 字节，每次加密必须使用不同的盐值，最后使用 Base64Url 编码。最后使用的盐值 (UTF-8(alg) || 0x00 || salt)
 - dir：直接使用 cek 采用 enc 字段指定的算法进行加密
@@ -107,7 +114,7 @@ description: 在[RFC 7518](https://www.rfc-editor.org/rfc/rfc7518)中定义用�
 ### jwe
 
 - [AesCBC](https://www.rfc-editor.org/rfc/rfc5116)：使用 CBC 模式进行加密，e.g. `A128CBC_HS256`, `A192CBC_HS256`, `A256CBC_HS256`
-  - [RFC 7518](https://www.rfc-editor.org/rfc/rfc7518)中仅用非 `dir` 的加密算法作例子，通常情况下 cek = (AES 密钥 || HMAC 密钥)，且 AES 密钥长度 == HMAC 密钥长度
+  - [RFC 7518](https://www.rfc-editor.org/rfc/rfc7518)中仅用非 `dir` 的加密算法作例子，通常情况下 cek = (AES 密钥 || HMAC 密钥)，且 AES 密钥长度等于 HMAC 密钥长度
 - [AesGCM](https://www.rfc-editor.org/rfc/rfc5649)：使用 GCM 模式进行加密，通常 Header 中伴随 `iv` 和 `tag` 使用，e.g. `A128GCM`, `A192GCM`, `A256GCM`
 
 ---
@@ -122,10 +129,10 @@ description: 在 [RFC 7517](https://www.rfc-editor.org/rfc/rfc7517) 中定义用
 
 ## kty
 
-- [RSA](https://www.rfc-editor.org/rfc/rfc7518)：RSA 密钥，e.g. `RSA`
-- [EC](https://www.rfc-editor.org/rfc/rfc7518)：椭圆曲线密钥，e.g. `EC`
-- [OKP](https://www.rfc-editor.org/rfc/rfc8037)：椭圆曲线密钥，e.g. `EdDSA`
-- [oct](https://www.rfc-editor.org/rfc/rfc7518)：对称密钥，e.g. `oct`
+- [RSA](https://www.rfc-editor.org/rfc/rfc8170)：RSA 密钥，e.g. `RSA`
+- [EC](https://www.rfc-editor.org/rfc/rfc8422)：椭圆曲线密钥，是 SECP 系列的椭圆曲线，e.g. `EC`
+- [OKP](https://www.rfc-editor.org/rfc/rfc8037)：椭圆曲线密钥，目前的实现是 Ed25519 密钥，e.g. `EdDSA`
+- [oct](https://www.rfc-editor.org/rfc/rfc3826)：对称密钥，目前的特指 AES 密钥，e.g. `oct`
 
 ---
 
@@ -137,14 +144,29 @@ description: 在 [RFC 7515](https://www.rfc-editor.org/rfc/rfc7515) 中定义用
 
 > 在 [RFC 7515](https://www.rfc-editor.org/rfc/rfc7515) 中定义用于在 JWT 中进行签名和验证的数据格式。
 
-
 ## Overview
 
 > jws 表示基于 Base64Url 编码的 JSON 结构的数字签名或者 MAC 的内容，通常用于验证消息的完整性
 
-- JOSE Header：参考 [JWT-JOSE Header](#jwt)
+### JOSE Header
+
+- JOSE Header：`alg`、`cty`、`typ` 参考 [JWT-JOSE Header](#jwt)
+  - :ctip[`jku`]{title="JWK Set URL"}:ctip[(optional)]{title="可选的字段"}：是一个 [[URI]](/blog/terms/web#uri)，指向一组 JSON 编码的公共密钥资源，其中一个与 jws 的签名密钥相关联。
+    如果使用 HTTP 获取密钥，则必须使用传输层安全协议保护（TLS）
+  - :ctip[`jwk`]{title="JSON Web Key"}:ctip[(optional)]{title="可选的字段"}：用于数字签名的 JWK 的 JSON 对象
+  - :ctip[`kid`]{title="Key ID"}:ctip[(optional)]{title="可选的字段"}：标识着当前 jws 被哪一个 jwk 保护（签名），通常在 **jwk set** 中使用 `kid` 找到对应的 jwk 进行验证。
+  - :ctip[`x5u`]{title="X.509 URL"}:ctip[(optional)]{title="可选的字段"}：X.509 证书/证书链的 URL 地址，当前证书格式为 PEM，且证书的公钥必须与 jws 的签名私钥匹配，该证书可用于查找上级证书
+    该证书的获取若使用 HTTP 协议，则必须使用传输层安全协议保护（TLS）
+  - :ctip[`x5c`]{title="X.509 Certificate Chain"}:ctip[(optional)]{title="可选的字段"}：X.509 证书/证书链，以 JSON 格式表示，单个证书以 Base64(NoUrl)-[[der]](/blog/terms/crypto#der) 编码的形式存放。
+  - :ctip[`x5t`]{title="X.509 Certificate SHA-1 Thumbprint"}:ctip[(optional)]{title="可选的字段"}：X.509 证书以 Base64Url 编码的 SHA-1 摘要
+  - :ctip[`x5t#S256`]{title="X.509 Certificate SHA-256 Thumbprint"}:ctip[(optional)]{title="可选的字段"}：X.509 证书以 Base64Url 编码的 SHA-256 摘要
+  - :ctip[`crit`]{title="Critical"}:ctip[(optional)]{title="可选的字段"}：声明一个字符串数组，用于表示该 jws 的 JOSE Header 内一些字段是验证方必须验证的，若验证方验证不了则应当拒绝当前 jws。
 - Payload：参考 [JWT-Payload](#jwt)
-- Signature: 
+- Signature: 计算签名需要使用 `alg` 字段指定的算法，输入的格式是 ASCII(Base64Url(JOSE Header) || '.' || Base64Url(Payload))，输出的格式是 Base64Url(Signature)
+
+:::tip
+在 [RFC 7515](https://www.rfc-editor.org/rfc/rfc7515#section-10) 中针对一些攻击手段提出了一些建议，例如 x5t 中使用的 SHA-1 算法，在 RFC 8017 中已经不推荐使用，因此建议使用 x5t#S256 替代 x5t。更多的建议可以参考 [RFC 7515](https://www.rfc-editor.org/rfc/rfc7515#section-10) 的 10 节。
+:::
 
 ---
 

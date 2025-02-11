@@ -153,9 +153,9 @@ const config: Config = {
   ],
   themeConfig: {
     algolia: {
-      apiKey: "61111111111111111111111111111111",
-      indexName: "heliannuuthus",
-      appId: "heliannuuthus",
+      appId: "VB0X62ZNK3",
+      apiKey: "801b2c72ce93de431b874b92d64738b4",
+      indexName: "heliannuuthusio",
       contextualSearch: true,
     },
     mermaid: {
