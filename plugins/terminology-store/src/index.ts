@@ -17,7 +17,7 @@ export interface TermData {
 }
 
 class TerminologyStore {
-  terms: Record<string, Record<string, TermData>> = {};
+  terms: Record<string, string> = {};
   updated: string[] = [];
   private static instance: TerminologyStore;
 
@@ -31,8 +31,8 @@ class TerminologyStore {
     this.updated = Object.keys(this.terms);
   }
 
-  addTerm(resourcePath: string, metadata: Record<string, TermData>) {
-    this.terms[resourcePath] = metadata;
+  addTerm(resourcePath: string, source: string) {
+    this.terms[resourcePath] = source;
     fs.writeFileSync(glossaryPath, JSON.stringify(this.terms));
     this.setUpdatedResourcePath(resourcePath);
     return { resourcePath };
@@ -42,7 +42,7 @@ class TerminologyStore {
     return resourcePath in this.terms;
   }
 
-  readGlossary(): Record<string, Record<string, TermData>> {
+  readGlossary(): Record<string, string> {
     return JSON.parse(fs.readFileSync(glossaryPath, "utf8"));
   }
 

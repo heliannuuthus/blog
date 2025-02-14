@@ -1,5 +1,5 @@
 import { Typography, Drawer, Button, Card, Divider, Space } from "antd";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense, lazy } from "react";
 import { usePluginData } from "@docusaurus/useGlobalData";
 import { useBaseUrlUtils } from "@docusaurus/useBaseUrl";
 import { AuthorAttributes } from "@docusaurus/plugin-content-blog";
@@ -18,12 +18,13 @@ import TermItem from "@site/src/components/terms/TermItem";
 import MDXContent from "@theme/MDXContent";
 import { MDXProvider } from "@mdx-js/react";
 import MDXComponents from "@theme/MDXComponents";
-import { run } from "@mdx-js/mdx";
+import { compile } from "@mdx-js/mdx";
 import runtime from "react/jsx-runtime";
 import React from "react";
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useMDXComponents as _provideComponents } from "@mdx-js/react";
-
+import JsxParser from "react-jsx-parser";
+import Crypto from "@site/blog/terms/crypto.mdx";
 declare global {
   interface Window {
     _cachedTerms: Record<string, any>;
@@ -335,7 +336,8 @@ export const TerminologyPreview = ({
   anchor: string;
   children: React.ReactNode;
 }) => {
-  const [Component, setComponent] = useState(null);
+  const [Component, setComponent] = useState(() => () => null);
+
   const { withBaseUrl } = useBaseUrlUtils();
   const { authors } = usePluginData("authors-docusaurus-plugin") as {
     authors: Record<string, AuthorAttributes>;
@@ -345,32 +347,21 @@ export const TerminologyPreview = ({
     url: string,
     authors: Record<string, AuthorAttributes>
   ) => {
-    const response = await fetch(withBaseUrl(`${path}.json`));
-    const data = await response.json();
-    setComponent(() =>
-      new Function("React", "_jsx", "_jsxs", "_provideComponents", data)(
-        React,
-        _jsx,
-        _jsxs,
-        _provideComponents,
-        {
-          Term: TermPreview,
-          TermPreview: TermPreview,
-          Terminology: Terminology,
-          TermItem: TermItem,
-          Comment: Comment,
-          Tooltip: Tooltip,
-          ...MDXComponents,
-        }
-      )
+    await import(`@site/blog/terms/${path.split("/").pop()}.mdx`).then(
+      (exported) => {
+        setComponent(() => exported.default);
+        console.log("content1", exported);
+      }
     );
-    console.log("Component", Component);
   };
   useEffect(() => {
     fetchContent(`${path.replace(/\/$/, "")}.json`, authors);
   }, [path, anchor]);
 
-  return <div>{Component ? <Component /> : "loading..."}</div>;
+  return (
+    <Suspense fallback={<div>loading...</div>}>
+    </Suspense>
+  );
 };
 
 export default TermPreview;
