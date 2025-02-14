@@ -1,8 +1,7 @@
----
-slug: jwt
-title: JSON Web Token
-description: 由 [RFC 7519](https://www.rfc-editor.org/rfc/rfc7519) 定义的一种开放标准，用于在各方之间安全地传输信息作为 JSON 对象。
----
+import Term from "@site/src/components/terms/TermPreview";
+
+:::::terminology
+::::term{title="JSON Web Token" #jwt .heliannuuthus .robot}
 
 > 通常我们见到的都是用 `.` 分隔的三段([[jws]](/blog/terms/jwt#jws))或五段([[jwe]](/blog/terms/jwt#jwe)) Base64Url 编码的 JSON 对象。
 
@@ -57,13 +56,9 @@ description: 由 [RFC 7519](https://www.rfc-editor.org/rfc/rfc7519) 定义的一
 - Public Claims：由 IANA 定义的声明，例如：`token-type: jwt` 等
 - Private Claims：由使用方定义的声明，例如：`role`, `scope`
 
----
+::::
 
-slug: jwa
-title: JSON Web Algorithms
-description: 在[RFC 7518](https://www.rfc-editor.org/rfc/rfc7518)中定义用于在 JWT 中进行加密、解密、签名、验证的算法。
-
----
+::::term{title="JSON Web Algorithms" #jwa .heliannuuthus .robot}
 
 > 在[RFC 7518](https://www.rfc-editor.org/rfc/rfc7518)中定义用于在 JWT 中进行加密、解密、签名、验证的算法。
 
@@ -117,15 +112,9 @@ description: 在[RFC 7518](https://www.rfc-editor.org/rfc/rfc7518)中定义用�
   - [RFC 7518](https://www.rfc-editor.org/rfc/rfc7518)中仅用非 `dir` 的加密算法作例子，通常情况下 cek = (AES 密钥 || HMAC 密钥)，且 AES 密钥长度等于 HMAC 密钥长度
 - [AesGCM](https://www.rfc-editor.org/rfc/rfc5649)：使用 GCM 模式进行加密，通常 Header 中伴随 `iv` 和 `tag` 使用，e.g. `A128GCM`, `A192GCM`, `A256GCM`
 
----
+::::
 
-slug: jwk
-title: JSON Web Key
-description: 在 [RFC 7517](https://www.rfc-editor.org/rfc/rfc7517) 中定义用于在 JWT 中进行加密解密签名验证的密钥以及一些使用密钥的注意事项。
-
----
-
-> 在 [RFC 7517](https://www.rfc-editor.org/rfc/rfc7517) 中定义用于在 JWT 中进行加密解密签名验证的密钥以及一些使用密钥的注意事项。
+::::term{title="JSON Web Key" #jwk .heliannuuthus .robot}
 
 ## kty
 
@@ -134,13 +123,9 @@ description: 在 [RFC 7517](https://www.rfc-editor.org/rfc/rfc7517) 中定义用
 - [OKP](https://www.rfc-editor.org/rfc/rfc8037)：椭圆曲线密钥，目前的实现是 Ed25519 密钥，e.g. `EdDSA`
 - [oct](https://www.rfc-editor.org/rfc/rfc3826)：对称密钥，目前的特指 AES 密钥，e.g. `oct`
 
----
+::::
 
-slug: jws
-title: JSON Web Signature
-description: 在 [RFC 7515](https://www.rfc-editor.org/rfc/rfc7515) 中定义用于在 JWT 中进行签名和验证的数据格式。
-
----
+::::term{title="JSON Web Signature" #jws .heliannuuthus .robot}
 
 > 在 [RFC 7515](https://www.rfc-editor.org/rfc/rfc7515) 中定义用于在 JWT 中进行签名和验证的数据格式。
 
@@ -168,12 +153,11 @@ description: 在 [RFC 7515](https://www.rfc-editor.org/rfc/rfc7515) 中定义用
 在 [RFC 7515](https://www.rfc-editor.org/rfc/rfc7515#section-10) 中针对一些攻击手段提出了一些建议，例如 x5t 中使用的 SHA-1 算法，在 RFC 8017 中已经不推荐使用，因此建议使用 x5t#S256 替代 x5t。更多的建议可以参考 [RFC 7515](https://www.rfc-editor.org/rfc/rfc7515#section-10) 的 10 节。
 :::
 
----
+::::
 
-slug: jwe
-title: JSON Web Encryption
-description: 在 [RFC 7518](https://www.rfc-editor.org/rfc/rfc7518) 中定义用于在 JWT 中进行加密和解密的数据格式。
-
----
+::::term{title="JSON Web Encryption" #jwe .heliannuuthus .robot}
 
 > 在 [RFC 7518](https://www.rfc-editor.org/rfc/rfc7518) 中定义用于在 JWT 中进行加密和解密的数据格式。
+
+::::
+:::::

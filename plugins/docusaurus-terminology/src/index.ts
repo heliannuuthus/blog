@@ -32,7 +32,7 @@ export interface TerminologyOptions {
 
 export default async function DocusaurusTerminologyPlugin(
   context: DocusaurusContext,
-  options: TerminologyOptions,
+  options: TerminologyOptions
 ): Promise<Plugin<any>> {
   try {
     fs.rm("node_modules/.cache", { recursive: true }, (err) => {
@@ -64,7 +64,7 @@ export default async function DocusaurusTerminologyPlugin(
             (kider: RuleSetUseItem) =>
               typeof kider === "object" &&
               typeof kider.loader === "string" &&
-              kider.loader.includes("plugin-content-blog"),
+              kider.loader.includes("plugin-content-blog")
           )
         );
       });
@@ -78,7 +78,7 @@ export default async function DocusaurusTerminologyPlugin(
               (kider: RuleSetUseItem) =>
                 typeof kider === "object" &&
                 typeof kider.loader === "string" &&
-                kider.loader.includes("mdx-loader"),
+                kider.loader.includes("mdx-loader")
             )
           );
         });
@@ -103,26 +103,38 @@ export default async function DocusaurusTerminologyPlugin(
               (kider: RuleSetUseItem) =>
                 typeof kider === "object" &&
                 typeof kider.loader === "string" &&
-                (kider.loader.includes("heliannuuthus-webpack-terms-loader") ||
-                  kider.loader.includes(
-                    "heliannuuthus-webpack-terms-replace-loader",
-                  )),
+                kider.loader.includes("heliannuuthus-webpack-terms-loader")
             )
           );
         })
       ) {
-        rule.use.push(
-          {
-            loader: require.resolve("heliannuuthus-webpack-terms-loader"),
-            options,
-          },
-          {
-            loader: require.resolve(
-              "heliannuuthus-webpack-terms-replace-loader",
-            ),
-            options,
-          },
-        );
+        rule.use.unshift({
+          loader: require.resolve("heliannuuthus-webpack-terms-loader"),
+          options,
+        });
+      }
+      if (
+        rule &&
+        Array.isArray(rule.use) &&
+        !rules.find((r) => {
+          return (
+            r.use &&
+            Array.isArray(r.use) &&
+            r.use.some(
+              (kider: RuleSetUseItem) =>
+                typeof kider === "object" &&
+                typeof kider.loader === "string" &&
+                kider.loader.includes(
+                  "heliannuuthus-webpack-terms-replace-loader"
+                )
+            )
+          );
+        })
+      ) {
+        rule.use.push({
+          loader: require.resolve("heliannuuthus-webpack-terms-replace-loader"),
+          options,
+        });
       }
       return {
         mergeStrategy: { module: "replace" },

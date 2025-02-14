@@ -41,6 +41,7 @@
     "heliannuuthus-parse-md": "file:./plugins/parse-md",
     "heliannuuthus-remark-comment-tooltip": "file:./packages/remark-comment-tooltip",
     "heliannuuthus-remark-external-link": "file:./packages/remark-external-link",
+    "heliannuuthus-remark-terminology": "file:./packages/remark-terminology",
     "heliannuuthus-terminology-store": "file:./plugins/terminology-store",
     "js-yaml": "^4.1.0",
     "package-up": "^5.0.0",
